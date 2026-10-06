@@ -1,0 +1,31 @@
+query GetSamplesByProduct($after: String) {
+  uiapi {
+    aggregate {
+      ProductDisbursement(groupBy: { ProductName: { group: true } }, after: $after) {
+        edges {
+          node {
+            aggregate {
+              ProductName {
+                value
+              }
+              units: QuantityDisbursed {
+                sum {
+                  value
+                }
+              }
+              total: Id {
+                count {
+                  value
+                }
+              }
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+query GetVisitChannelCounts($after: String) {
+  uiapi {
+    aggregate {
+      Visit(groupBy: { Channel: { group: true } }, after: $after) {
+        edges {
+          node {
+            aggregate {
+              Channel {
+                value
+              }
+              total: Id {
+                count {
+                  value
+                }
+              }
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+}

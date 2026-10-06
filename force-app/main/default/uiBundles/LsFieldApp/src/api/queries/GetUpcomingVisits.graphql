@@ -1,0 +1,47 @@
+query GetUpcomingVisits($after: String, $from: DateTimeInput) {
+  uiapi {
+    query {
+      Visit(after: $after, first: 8, where: { Status: { eq: "Planned" }, PlannedVisitStartTime: { gte: $from } }, orderBy: { PlannedVisitStartTime: { order: ASC } }) {
+        edges {
+          node {
+            Id
+            Name @optional {
+              value
+              displayValue
+            }
+            Status @optional {
+              value
+              displayValue
+            }
+            Channel @optional {
+              value
+              displayValue
+            }
+            VisitPriority @optional {
+              value
+              displayValue
+            }
+            PlannedVisitStartTime @optional {
+              value
+              displayValue
+            }
+            LS_Territory_Name__c @optional {
+              value
+              displayValue
+            }
+            Account {
+              Name @optional {
+                value
+                displayValue
+              }
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+}

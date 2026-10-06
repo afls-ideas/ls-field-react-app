@@ -1,0 +1,55 @@
+query GetDisbursements($after: String) {
+  uiapi {
+    query {
+      ProductDisbursement(after: $after, first: 200, orderBy: { DisbursementDate: { order: DESC } }) {
+        edges {
+          node {
+            Id
+            Name @optional {
+              value
+              displayValue
+            }
+            ProductName @optional {
+              value
+              displayValue
+            }
+            QuantityDisbursed @optional {
+              value
+              displayValue
+            }
+            QuantityRequested @optional {
+              value
+              displayValue
+            }
+            Status @optional {
+              value
+              displayValue
+            }
+            DisbursementDate @optional {
+              value
+              displayValue
+            }
+            IsSignatureCaptured @optional {
+              value
+              displayValue
+            }
+            Comments @optional {
+              value
+              displayValue
+            }
+            DisbursementToAccount {
+              Name @optional {
+                value
+                displayValue
+              }
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+}

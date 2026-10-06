@@ -1,0 +1,9 @@
+{
+  "permsetAssignments": {
+    "assignments": {
+      "LsFieldApp_Access": {
+        "assignee": "currentUser"
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+query GetVisitStatusCounts($after: String) {
+  uiapi {
+    aggregate {
+      Visit(groupBy: { Status: { group: true } }, after: $after) {
+        edges {
+          node {
+            aggregate {
+              Status {
+                value
+              }
+              total: Id {
+                count {
+                  value
+                }
+              }
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+}
