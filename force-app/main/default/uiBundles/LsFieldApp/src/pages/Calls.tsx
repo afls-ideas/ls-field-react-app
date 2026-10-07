@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router';
 import { Search } from 'lucide-react';
 import { fetchVisitsPage, type Call } from '@/api/fieldData';
 import { useAsyncData } from '@/hooks/useAsyncData';
@@ -39,7 +40,7 @@ interface ExtraPages {
 
 export default function Calls() {
   useEffect(() => {
-    document.title = 'Calls | Field Ledger';
+    document.title = 'Visits | Field Ledger';
   }, []);
 
   const [status, setStatus] = useState(ALL);
@@ -88,7 +89,7 @@ export default function Calls() {
         hasNextPage: page.hasNextPage,
       });
     } catch (err) {
-      setMoreError(err instanceof Error ? err.message : 'Unable to load more calls');
+      setMoreError(err instanceof Error ? err.message : 'Unable to load more visits');
     } finally {
       setLoadingMore(false);
     }
@@ -97,9 +98,9 @@ export default function Calls() {
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <PageHeader
-        eyebrow="Call reporting"
-        title="Calls"
-        description="Every planned and completed call. Filter by status or channel, or search by account and territory."
+        eyebrow="Visit reporting"
+        title="Visits"
+        description="Every planned and completed visit. Filter by status or channel, or search by account and territory."
       />
 
       <Card className="rise rise-1 gap-0 overflow-hidden p-0">
@@ -113,8 +114,8 @@ export default function Calls() {
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search account, call, or territory"
-              aria-label="Search loaded calls"
+              placeholder="Search account, visit, or territory"
+              aria-label="Search loaded visits"
               className="h-11 pl-9"
             />
           </div>
@@ -159,11 +160,11 @@ export default function Calls() {
             ))}
           </div>
         ) : (
-          <Table aria-label="Calls">
+          <Table aria-label="Visits">
             <TableHeader>
               <TableRow>
                 <TableHead>Account</TableHead>
-                <TableHead>Call</TableHead>
+                <TableHead>Visit</TableHead>
                 <TableHead>Channel</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Priority</TableHead>
@@ -175,15 +176,17 @@ export default function Calls() {
               {visible.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
-                    No calls match these filters.
+                    No visits match these filters.
                   </TableCell>
                 </TableRow>
               ) : (
                 visible.map((call) => (
                   <TableRow key={call.id}>
                     <TableCell className="font-medium">{call.account ?? '—'}</TableCell>
-                    <TableCell className="tabular-nums text-muted-foreground">
-                      {call.name}
+                    <TableCell className="tabular-nums">
+                      <Link to={`/visits/${call.id}`} className="text-primary underline-offset-4 hover:underline">
+                        {call.name}
+                      </Link>
                     </TableCell>
                     <TableCell>{call.channel ?? '—'}</TableCell>
                     <TableCell>
@@ -218,7 +221,7 @@ export default function Calls() {
               onClick={loadMore}
               disabled={loadingMore}
             >
-              {loadingMore ? 'Loading…' : 'Load more calls'}
+              {loadingMore ? 'Loading…' : 'Load more visits'}
             </Button>
           )}
         </div>

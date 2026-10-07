@@ -1,0 +1,19 @@
+query GetAccountAddresses($accountId: ID) {
+  uiapi {
+    query {
+      ContactPointAddress(where: { ParentId: { eq: $accountId }, IsActive: { eq: true } }, first: 20) {
+        edges {
+          node {
+            Id
+            Name @optional { value }
+            Street @optional { value }
+            City @optional { value }
+            State @optional { value }
+            PostalCode @optional { value }
+            IsPrimary @optional { value }
+          }
+        }
+      }
+    }
+  }
+}

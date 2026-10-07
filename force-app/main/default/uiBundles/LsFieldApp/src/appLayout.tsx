@@ -1,10 +1,15 @@
 import { useEffect, useRef } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router';
-import { ClipboardList, LayoutDashboard, Phone, Pill } from 'lucide-react';
+import { Boxes, CalendarDays, ClipboardList, HelpCircle, LayoutDashboard, Phone, Pill, Users } from 'lucide-react';
+import { Toaster } from '@/components/ui/sonner';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/calls', label: 'Calls', icon: Phone, end: false },
+  { to: '/accounts', label: 'Accounts', icon: Users, end: false },
+  { to: '/calendar', label: 'Calendar', icon: CalendarDays, end: false },
+  { to: '/inquiries', label: 'Inquiries', icon: HelpCircle, end: false },
+  { to: '/visits', label: 'Visits', icon: Phone, end: false },
+  { to: '/inventory', label: 'Inventory', icon: Boxes, end: false },
   { to: '/samples', label: 'Samples', icon: Pill, end: false },
 ] as const;
 
@@ -84,6 +89,7 @@ export default function AppLayout() {
       <div id="main-content" ref={mainRef} className="outline-none">
         <Outlet />
       </div>
+      <Toaster />
       <footer className="mx-auto max-w-7xl px-4 py-10 text-sm text-muted-foreground sm:px-6 lg:px-8">
         Live data from Salesforce Visit and ProductDisbursement records.
       </footer>

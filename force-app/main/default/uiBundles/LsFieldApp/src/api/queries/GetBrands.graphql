@@ -1,0 +1,14 @@
+query GetBrands {
+  uiapi {
+    query {
+      LifeSciMarketableProduct(where: { Type: { eq: "Brand" }, IsActive: { eq: true } }, first: 100, orderBy: { Name: { order: ASC } }) {
+        edges {
+          node {
+            Id
+            Name @optional { value }
+          }
+        }
+      }
+    }
+  }
+}

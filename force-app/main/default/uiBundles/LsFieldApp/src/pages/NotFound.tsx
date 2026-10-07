@@ -14,7 +14,7 @@ export default function NotFound() {
         That page isn&apos;t in the ledger
       </h1>
       <p className="mt-3 text-muted-foreground">
-        Head back to the dashboard to see your calls and samples.
+        Head back to the dashboard to see your visits and samples.
       </p>
       <Button asChild className="mt-8 min-h-11">
         <Link to="/">Back to dashboard</Link>

@@ -54,7 +54,7 @@ export default function Dashboard() {
       <PageHeader
         eyebrow="Field activity"
         title="Your territory at a glance"
-        description="Call volume, channel mix, and sample disbursements across every account you cover."
+        description="Visit volume, channel mix, and sample disbursements across every account you cover."
       />
 
       {error && <StatusAlert>{error}</StatusAlert>}
@@ -65,7 +65,7 @@ export default function Dashboard() {
       >
         <StatCard
           index={0}
-          label="Total calls"
+          label="Total visits"
           value={totalCalls === null ? null : formatNumber(totalCalls)}
           hint="All logged and planned"
           icon={<PhoneCall className="size-5" />}
@@ -75,7 +75,7 @@ export default function Dashboard() {
           label="Completed"
           value={status.data ? formatNumber(completed) : null}
           hint={
-            totalCalls ? `${formatPercent(completed, totalCalls)} of all calls` : undefined
+            totalCalls ? `${formatPercent(completed, totalCalls)} of all visits` : undefined
           }
           icon={<CheckCircle2 className="size-5" />}
         />
@@ -104,7 +104,7 @@ export default function Dashboard() {
             {channels.loading ? (
               <Skeleton className="h-40 w-full" />
             ) : (
-              <BarList items={channels.data ?? []} unit="calls" />
+              <BarList items={channels.data ?? []} unit="visits" />
             )}
           </CardContent>
         </Card>
@@ -126,8 +126,8 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-xl">Next up</CardTitle>
-            <Link to="/calls" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
-              All calls
+            <Link to="/visits" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
+              All visits
             </Link>
           </CardHeader>
           <CardContent>

@@ -1,0 +1,7 @@
+mutation CreateInquiryQuestion($input: InquiryQuestionCreateInput!) {
+  uiapi {
+    InquiryQuestionCreate(input: $input) {
+      Record { Id }
+    }
+  }
+}

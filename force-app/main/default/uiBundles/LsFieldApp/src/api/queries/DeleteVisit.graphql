@@ -1,0 +1,7 @@
+mutation DeleteVisit($input: RecordDeleteInput!) {
+  uiapi {
+    VisitDelete(input: $input) {
+      Id
+    }
+  }
+}

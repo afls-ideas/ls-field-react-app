@@ -1,0 +1,7 @@
+mutation CreateVisit($input: VisitCreateInput!) {
+  uiapi {
+    VisitCreate(input: $input) {
+      Record { Id }
+    }
+  }
+}

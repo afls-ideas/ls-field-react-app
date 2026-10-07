@@ -1,0 +1,21 @@
+query GetAccounts($after: String, $search: String) {
+  uiapi {
+    query {
+      Account(after: $after, first: 50, where: { Name: { like: $search } }, orderBy: { Name: { order: ASC } }) {
+        edges {
+          node {
+            Id
+            Name @optional { value displayValue }
+            RecordType @optional { Name @optional { value } }
+            Type @optional { value displayValue }
+            Phone @optional { value }
+            PersonEmail @optional { value }
+            PersonMailingCity @optional { value }
+            PersonMailingState @optional { value }
+          }
+        }
+        pageInfo { hasNextPage endCursor }
+      }
+    }
+  }
+}

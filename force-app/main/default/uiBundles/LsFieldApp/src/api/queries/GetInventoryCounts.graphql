@@ -1,0 +1,21 @@
+query GetInventoryCounts {
+  uiapi {
+    query {
+      InventoryCountAssessment(first: 100, orderBy: { CreatedDate: { order: DESC } }) {
+        edges {
+          node {
+            Id
+            Name @optional { value }
+            Status @optional { value displayValue }
+            Type @optional { value displayValue }
+            Purpose @optional { value displayValue }
+            PlannedStartDateTime @optional { value }
+            ActualEndDateTime @optional { value }
+            Location @optional { Name @optional { value } }
+            LocationPrimaryUser @optional { Name @optional { value } }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+query GetAccountTerritories($accountId: ID) {
+  uiapi {
+    query {
+      ProviderAcctTerritoryInfo(where: { AccountId: { eq: $accountId } }, first: 20) {
+        edges {
+          node {
+            Id
+            Territory2Id @optional { value }
+            Territory2 @optional { Name @optional { value } }
+            IsTargetedAccount @optional { value }
+            LastProviderVisitDate @optional { value }
+            NextProviderVisitDate @optional { value }
+            YearToDatePrvdVisitCount @optional { value }
+          }
+        }
+      }
+    }
+  }
+}

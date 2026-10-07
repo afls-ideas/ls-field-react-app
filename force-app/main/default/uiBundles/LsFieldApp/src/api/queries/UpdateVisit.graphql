@@ -1,0 +1,7 @@
+mutation UpdateVisit($input: VisitUpdateInput!) {
+  uiapi {
+    VisitUpdate(input: $input) {
+      Record { Id }
+    }
+  }
+}

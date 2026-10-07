@@ -1,0 +1,7 @@
+mutation UpdateProviderVisitProdDetailing($input: ProviderVisitProdDetailingUpdateInput!) {
+  uiapi {
+    ProviderVisitProdDetailingUpdate(input: $input) {
+      Record { Id }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+query GetInquiries($after: String) {
+  uiapi {
+    query {
+      Inquiry(after: $after, first: 100, orderBy: { CreatedDate: { order: DESC } }) {
+        edges {
+          node {
+            Id
+            Name @optional { value }
+            Type @optional { value displayValue }
+            Priority @optional { value displayValue }
+            Status @optional { value displayValue }
+            InquiryChannelType @optional { value displayValue }
+            SubmittedDateTime @optional { value }
+            CreatedDate @optional { value }
+            TerritoryName @optional { value }
+            Account @optional { Name @optional { value } }
+          }
+        }
+        pageInfo { hasNextPage endCursor }
+      }
+    }
+  }
+}

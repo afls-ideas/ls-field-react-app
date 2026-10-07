@@ -1,0 +1,20 @@
+query GetInventory {
+  uiapi {
+    query {
+      ProductBatchItem(first: 200, orderBy: { ExpirationDate: { order: ASC } }) {
+        edges {
+          node {
+            Id
+            IsActive @optional { value }
+            RemainingQuantity @optional { value }
+            ExpirationDate @optional { value }
+            Product @optional { Name @optional { value } }
+            ProductionBatch @optional { Name @optional { value } }
+            Location @optional { Name @optional { value } }
+            Assignee @optional { Name @optional { value } }
+          }
+        }
+      }
+    }
+  }
+}

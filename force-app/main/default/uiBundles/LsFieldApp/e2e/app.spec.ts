@@ -8,10 +8,10 @@ test.describe('Field Ledger', () => {
     ).toBeVisible();
   });
 
-  test('navigates to the calls page', async ({ page }) => {
+  test('navigates to the visits page', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('link', { name: 'Calls' }).click();
-    await expect(page.getByRole('heading', { name: 'Calls' })).toBeVisible();
+    await page.getByRole('link', { name: 'Visits' }).click();
+    await expect(page.getByRole('heading', { name: 'Visits' })).toBeVisible();
   });
 
   test('not found route shows 404', async ({ page }) => {

@@ -1,0 +1,18 @@
+query GetEventsInRange($from: DateTime, $to: DateTime) {
+  uiapi {
+    query {
+      Event(where: { StartDateTime: { gte: { value: $from }, lt: { value: $to } } }, first: 200, orderBy: { StartDateTime: { order: ASC } }) {
+        edges {
+          node {
+            Id
+            Subject @optional { value }
+            StartDateTime @optional { value }
+            EndDateTime @optional { value }
+            IsAllDayEvent @optional { value }
+            Location @optional { value }
+          }
+        }
+      }
+    }
+  }
+}

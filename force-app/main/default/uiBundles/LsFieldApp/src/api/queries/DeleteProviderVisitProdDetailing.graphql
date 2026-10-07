@@ -1,0 +1,7 @@
+mutation DeleteProviderVisitProdDetailing($input: RecordDeleteInput!) {
+  uiapi {
+    ProviderVisitProdDetailingDelete(input: $input) {
+      Id
+    }
+  }
+}

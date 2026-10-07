@@ -16,6 +16,17 @@ function isMutation(operation: string): boolean {
   return /^\s*mutation\b/.test(operation.replace(/#[^\n\r]*/g, ''));
 }
 
+/** A GraphQL response that carried errors; keeps the raw entries for callers that map them. */
+export class GraphQLRequestError extends Error {
+  readonly errors: { message: string; path?: unknown; extensions?: unknown }[];
+
+  constructor(errors: { message: string; path?: unknown; extensions?: unknown }[]) {
+    super(`GraphQL Error: ${errors.map(e => e.message).join('; ')}`);
+    this.name = 'GraphQLRequestError';
+    this.errors = errors;
+  }
+}
+
 export async function executeGraphQL<TData, TVariables>(
   operation: string,
   variables?: TVariables
@@ -29,11 +40,13 @@ export async function executeGraphQL<TData, TVariables>(
     : await data.graphql!.query<TData, TVariables>({
         query: operation,
         variables: variables,
+        // The SDK caches reads for 300s by default, which hides our own writes
+        // (edits and new records would not show up until it expired).
+        cacheControl: 'no-cache',
       });
 
   if (result.errors?.length) {
-    const msg = result.errors.map(e => e.message).join('; ');
-    throw new Error(`GraphQL Error: ${msg}`);
+    throw new GraphQLRequestError(result.errors);
   }
 
   if (result.data == null) {

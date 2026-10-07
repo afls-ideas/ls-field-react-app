@@ -1,0 +1,7 @@
+mutation CreateProviderVisitProdDetailing($input: ProviderVisitProdDetailingCreateInput!) {
+  uiapi {
+    ProviderVisitProdDetailingCreate(input: $input) {
+      Record { Id }
+    }
+  }
+}

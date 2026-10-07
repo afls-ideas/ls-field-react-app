@@ -1,0 +1,15 @@
+query GetInquiryRecordTypes {
+  uiapi {
+    query {
+      RecordType(where: { SobjectType: { in: ["Case", "Inquiry"] }, IsActive: { eq: true } }, first: 50) {
+        edges {
+          node {
+            Id
+            Name @optional { value }
+            SobjectType @optional { value }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+query GetProductRequests {
+  uiapi {
+    query {
+      ProductRequest(first: 100, orderBy: { CreatedDate: { order: DESC } }) {
+        edges {
+          node {
+            Id
+            ProductRequestNumber @optional { value }
+            Status @optional { value displayValue }
+            NeedByDate @optional { value }
+            CreatedDate @optional { value }
+            ShipmentType @optional { value displayValue }
+            DestinationLocation @optional { Name @optional { value } }
+          }
+        }
+      }
+    }
+  }
+}

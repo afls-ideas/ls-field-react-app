@@ -1,0 +1,7 @@
+mutation CreateCase($input: CaseCreateInput!) {
+  uiapi {
+    CaseCreate(input: $input) {
+      Record { Id }
+    }
+  }
+}

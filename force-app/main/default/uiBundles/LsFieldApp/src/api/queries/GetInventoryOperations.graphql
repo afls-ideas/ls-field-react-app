@@ -1,0 +1,20 @@
+query GetInventoryOperations {
+  uiapi {
+    query {
+      InventoryOperation(first: 100, orderBy: { CreatedDate: { order: DESC } }) {
+        edges {
+          node {
+            Id
+            Name @optional { value }
+            OperationType @optional { value displayValue }
+            Status @optional { value displayValue }
+            CreatedDate @optional { value }
+            SourceLocation @optional { Name @optional { value } }
+            DestinationLocation @optional { Name @optional { value } }
+            Comment @optional { value }
+          }
+        }
+      }
+    }
+  }
+}

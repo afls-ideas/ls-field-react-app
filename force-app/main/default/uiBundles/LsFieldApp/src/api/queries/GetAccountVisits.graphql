@@ -1,0 +1,20 @@
+query GetAccountVisits($accountId: ID) {
+  uiapi {
+    query {
+      Visit(where: { AccountId: { eq: $accountId } }, first: 25, orderBy: { PlannedVisitStartTime: { order: DESC } }) {
+        edges {
+          node {
+            Id
+            Name @optional { value }
+            Status @optional { value }
+            Channel @optional { value }
+            Call_type__c @optional { value displayValue }
+            PlannedVisitStartTime @optional { value }
+            LS_Territory_Name__c @optional { value }
+            Account @optional { Name @optional { value } }
+          }
+        }
+      }
+    }
+  }
+}
