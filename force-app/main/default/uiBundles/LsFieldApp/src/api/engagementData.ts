@@ -36,6 +36,12 @@ import type {
   GetInquiriesQuery,
   GetInquiriesQueryVariables,
   GetInquiryRecordTypesQuery,
+  GetAccountAffiliationsQuery,
+  GetAccountAffiliationsQueryVariables,
+  GetAccountInquiriesQuery,
+  GetAccountInquiriesQueryVariables,
+  GetProviderSummaryQuery,
+  GetProviderSummaryQueryVariables,
   GetVisitDetailQuery,
   GetVisitDetailQueryVariables,
   GetVisitsInRangeQuery,
@@ -60,6 +66,9 @@ import GET_BRANDS from './queries/GetBrands.graphql?raw';
 import GET_EVENTS_IN_RANGE from './queries/GetEventsInRange.graphql?raw';
 import GET_INQUIRIES from './queries/GetInquiries.graphql?raw';
 import GET_INQUIRY_RECORD_TYPES from './queries/GetInquiryRecordTypes.graphql?raw';
+import GET_ACCOUNT_AFFILIATIONS from './queries/GetAccountAffiliations.graphql?raw';
+import GET_ACCOUNT_INQUIRIES from './queries/GetAccountInquiries.graphql?raw';
+import GET_PROVIDER_SUMMARY from './queries/GetProviderSummary.graphql?raw';
 import GET_VISIT_DETAIL from './queries/GetVisitDetail.graphql?raw';
 import GET_VISITS_IN_RANGE from './queries/GetVisitsInRange.graphql?raw';
 
@@ -684,4 +693,112 @@ export async function createInquiry(input: NewInquiryInput): Promise<string> {
     const reason = error instanceof Error ? error.message : String(error);
     throw new Error(`Case ${caseId} was created but a follow-up step failed: ${reason}`);
   }
+}
+
+/* ------------------------------ Provider summary ----------------------------- */
+
+export interface SummarySection {
+  name: string;
+  items: string[];
+}
+
+export interface ProviderSummary {
+  territory: string | null;
+  generated: string | null;
+  keyInfo: SummarySection[];
+  changeInfo: SummarySection[];
+}
+
+/** Parses the generated {"keyInfo":[{sectionName,sectionData:[{data}]}]} payload; tolerates plain text. */
+function parseSummarySections(text: string | null, group: 'keyInfo' | 'changeInfo'): SummarySection[] {
+  if (!text) return [];
+  try {
+    const parsed = JSON.parse(text) as Record<string, unknown>;
+    const sections = (parsed[group] ?? (group === 'keyInfo' ? parsed : [])) as unknown;
+    if (!Array.isArray(sections)) return [];
+    return sections.flatMap((section: { sectionName?: string; sectionData?: { data?: string }[] }) => {
+      const items = (section.sectionData ?? []).flatMap((d) => (d.data ? [d.data] : []));
+      return items.length > 0 ? [{ name: section.sectionName ?? '', items }] : [];
+    });
+  } catch {
+    return [{ name: '', items: [text] }];
+  }
+}
+
+/**
+ * The summary is generated per rep and territory, so prefer the signed-in
+ * user's own record and fall back to the most recently generated one.
+ */
+export async function fetchProviderSummary(accountId: string): Promise<ProviderSummary | null> {
+  const data = await executeGraphQL<GetProviderSummaryQuery, GetProviderSummaryQueryVariables>(
+    GET_PROVIDER_SUMMARY,
+    { accountId }
+  );
+  const rows = nodes(data.uiapi.query.PrvdAccountTerritorySummary);
+  const me = data.uiapi.currentUser?.Id;
+  const row = rows.find((r) => me && raw(r.UserId) === me) ?? rows[0];
+  if (!row) return null;
+  const keyInfo = parseSummarySections(raw(row.KeyInformationSummary), 'keyInfo');
+  const changeInfo = parseSummarySections(raw(row.ChangeInformationSummary), 'changeInfo');
+  if (keyInfo.length === 0 && changeInfo.length === 0) return null;
+  return {
+    territory: raw(row.Territory2?.Name),
+    generated: raw(row.KeyInfoSummaryDateTime) ?? raw(row.ChangeInfoSummaryDateTime),
+    keyInfo,
+    changeInfo,
+  };
+}
+
+/* ------------------------- Account related lists ------------------------- */
+
+export interface AffiliationRow {
+  id: string;
+  accountId: string | null;
+  account: string | null;
+  type: string | null;
+  role: string | null;
+  influence: string | null;
+  strength: string | null;
+  primary: boolean;
+  active: boolean;
+  start: string | null;
+  end: string | null;
+}
+
+export async function fetchAccountAffiliations(accountId: string): Promise<AffiliationRow[]> {
+  const data = await executeGraphQL<GetAccountAffiliationsQuery, GetAccountAffiliationsQueryVariables>(
+    GET_ACCOUNT_AFFILIATIONS,
+    { accountId }
+  );
+  return nodes(data.uiapi.query.ProviderAffiliation).map((node) => ({
+    id: node.Id,
+    accountId: raw(node.RelatedAccountId),
+    account: raw(node.RelatedAccount?.Name),
+    type: label(node.AffiliationType),
+    role: label(node.Role),
+    influence: label(node.InfluenceType),
+    strength: label(node.AffiliationStrengthType),
+    primary: raw(node.IsPrimary) ?? false,
+    active: raw(node.IsActive) ?? false,
+    start: raw(node.EffectiveStartDate),
+    end: raw(node.EffectiveEndDate),
+  }));
+}
+
+export async function fetchAccountInquiries(accountId: string): Promise<InquiryRow[]> {
+  const data = await executeGraphQL<GetAccountInquiriesQuery, GetAccountInquiriesQueryVariables>(
+    GET_ACCOUNT_INQUIRIES,
+    { accountId }
+  );
+  return nodes(data.uiapi.query.Inquiry).map((node) => ({
+    id: node.Id,
+    name: raw(node.Name) ?? node.Id,
+    account: raw(node.Account?.Name),
+    type: label(node.Type),
+    priority: label(node.Priority),
+    status: label(node.Status),
+    channel: label(node.InquiryChannelType),
+    submitted: raw(node.SubmittedDateTime) ?? raw(node.CreatedDate),
+    territory: raw(node.TerritoryName),
+  }));
 }

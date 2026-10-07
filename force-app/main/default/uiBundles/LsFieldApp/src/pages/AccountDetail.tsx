@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router';
 import { CalendarPlus, HelpCircle, MapPin } from 'lucide-react';
 import {
   fetchAccountAddresses,
+  fetchAccountAffiliations,
+  fetchAccountInquiries,
   fetchAccountDetail,
   fetchAccountTerritories,
   fetchAccountVisits,
@@ -13,7 +15,9 @@ import { StatusBadge } from '@/components/field/StatusBadge';
 import { StatusAlert } from '@/components/alerts/status-alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ProviderSummaryCard } from '@/components/field/ProviderSummaryCard';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { formatDate, formatDateTime } from '@/lib/format';
 
 export default function AccountDetail() {
@@ -21,6 +25,8 @@ export default function AccountDetail() {
   const account = useAsyncData(() => fetchAccountDetail(accountId), [accountId]);
   const territories = useAsyncData(() => fetchAccountTerritories(accountId), [accountId]);
   const addresses = useAsyncData(() => fetchAccountAddresses(accountId), [accountId]);
+  const affiliations = useAsyncData(() => fetchAccountAffiliations(accountId), [accountId]);
+  const inquiries = useAsyncData(() => fetchAccountInquiries(accountId), [accountId]);
   const visits = useAsyncData(() => fetchAccountVisits(accountId), [accountId]);
 
   const name = account.data?.name;
@@ -75,7 +81,47 @@ export default function AccountDetail() {
 
       {error && <div className="mb-4"><StatusAlert>{error}</StatusAlert></div>}
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <Tabs defaultValue="dashboard">
+        <TabsList aria-label="Account sections">
+          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="visits">Visits</TabsTrigger>
+          <TabsTrigger value="affiliations">Affiliations</TabsTrigger>
+          <TabsTrigger value="inquiries">Inquiries</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="dashboard" className="mt-4 space-y-6">
+          <ProviderSummaryCard accountId={detail.id} />
+        <Card className="rise rise-2">
+          <CardHeader>
+            <CardTitle>Territories</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {territories.loading ? (
+              <Skeleton className="h-16 w-full" />
+            ) : (territories.data ?? []).length === 0 ? (
+              <p className="text-sm text-muted-foreground">This account is not aligned to a territory.</p>
+            ) : (
+              <ul className="divide-y divide-border">
+                {territories.data!.map((territory) => (
+                  <li key={territory.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
+                    <span className="font-medium">
+                      {territory.territoryName ?? territory.territoryId ?? 'Territory'}
+                      {territory.targeted && <span className="ml-2 text-xs text-accent-foreground">Targeted</span>}
+                    </span>
+                    <span className="text-muted-foreground">
+                      Last visit {formatDate(territory.lastVisitDate)} · Next {formatDate(territory.nextVisitDate)} · {territory.ytdVisits} YTD
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+
+        </TabsContent>
+
+        <TabsContent value="details" className="mt-4">
         <Card className="rise rise-1">
           <CardHeader>
             <CardTitle>Contact</CardTitle>
@@ -104,34 +150,10 @@ export default function AccountDetail() {
           </CardContent>
         </Card>
 
-        <Card className="rise rise-2 lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Territories</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {territories.loading ? (
-              <Skeleton className="h-16 w-full" />
-            ) : (territories.data ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground">This account is not aligned to a territory.</p>
-            ) : (
-              <ul className="divide-y divide-border">
-                {territories.data!.map((territory) => (
-                  <li key={territory.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
-                    <span className="font-medium">
-                      {territory.territoryName ?? territory.territoryId ?? 'Territory'}
-                      {territory.targeted && <span className="ml-2 text-xs text-accent-foreground">Targeted</span>}
-                    </span>
-                    <span className="text-muted-foreground">
-                      Last visit {formatDate(territory.lastVisitDate)} · Next {formatDate(territory.nextVisitDate)} · {territory.ytdVisits} YTD
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
+        </TabsContent>
 
-        <Card className="rise rise-3 lg:col-span-3">
+        <TabsContent value="visits" className="mt-4">
+        <Card className="rise rise-3">
           <CardHeader>
             <CardTitle>Visits</CardTitle>
           </CardHeader>
@@ -155,7 +177,75 @@ export default function AccountDetail() {
             )}
           </CardContent>
         </Card>
-      </div>
+        </TabsContent>
+
+        <TabsContent value="affiliations" className="mt-4">
+          <Card className="rise rise-1">
+            <CardHeader><CardTitle>Affiliations</CardTitle></CardHeader>
+            <CardContent>
+              {affiliations.error ? (
+                <StatusAlert>{affiliations.error}</StatusAlert>
+              ) : affiliations.loading ? (
+                <Skeleton className="h-24 w-full" />
+              ) : (affiliations.data ?? []).length === 0 ? (
+                <p className="text-sm text-muted-foreground">No affiliations.</p>
+              ) : (
+                <ul className="divide-y divide-border">
+                  {affiliations.data!.map((a) => (
+                    <li key={a.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
+                      <span>
+                        {a.accountId ? (
+                          <Link to={`/accounts/${a.accountId}`} className="font-medium text-primary underline underline-offset-4">
+                            {a.account ?? 'Account'}
+                          </Link>
+                        ) : (
+                          <span className="font-medium">{a.account ?? '—'}</span>
+                        )}
+                        {a.primary && <span className="ml-2 text-xs text-muted-foreground">Primary</span>}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {[a.type, a.role, a.influence, a.strength].filter(Boolean).join(' · ')}
+                        {a.start || a.end ? ` · ${formatDate(a.start)} – ${a.end ? formatDate(a.end) : 'present'}` : ''}
+                      </span>
+                      <StatusBadge value={a.active ? 'Active' : 'Inactive'} />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="inquiries" className="mt-4">
+          <Card className="rise rise-1">
+            <CardHeader><CardTitle>Inquiries</CardTitle></CardHeader>
+            <CardContent>
+              {inquiries.error ? (
+                <StatusAlert>{inquiries.error}</StatusAlert>
+              ) : inquiries.loading ? (
+                <Skeleton className="h-24 w-full" />
+              ) : (inquiries.data ?? []).length === 0 ? (
+                <p className="text-sm text-muted-foreground">No inquiries yet.</p>
+              ) : (
+                <ul className="divide-y divide-border">
+                  {inquiries.data!.map((i) => (
+                    <li key={i.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
+                      <span className="font-medium">{i.name}</span>
+                      <span className="text-muted-foreground">
+                        {[i.type, i.priority ? `Priority: ${i.priority}` : null, i.channel, formatDate(i.submitted)].filter(Boolean).join(' · ')}
+                      </span>
+                      <StatusBadge value={i.status} />
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Button asChild variant="outline" className="mt-4">
+                <Link to={`/inquiries?accountId=${detail.id}`}>New inquiry</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </main>
   );
 }

@@ -1,0 +1,20 @@
+query GetProviderSummary($accountId: ID) {
+  uiapi {
+    currentUser { Id }
+    query {
+      PrvdAccountTerritorySummary(where: { AccountId: { eq: $accountId } }, first: 20, orderBy: { KeyInfoSummaryDateTime: { order: DESC } }) {
+        edges {
+          node {
+            Id
+            UserId @optional { value }
+            Territory2 @optional { Name @optional { value } }
+            KeyInformationSummary @optional { value }
+            KeyInfoSummaryDateTime @optional { value }
+            ChangeInformationSummary @optional { value }
+            ChangeInfoSummaryDateTime @optional { value }
+          }
+        }
+      }
+    }
+  }
+}

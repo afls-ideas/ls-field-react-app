@@ -562,12 +562,26 @@ export type GetAccountAddressesQueryVariables = Exact<{
 
 export type GetAccountAddressesQuery = { uiapi: { query: { ContactPointAddress?: { edges?: Array<{ node?: { Id: string, Name?: { value?: string | null } | null, Street?: { value?: string | null } | null, City?: { value?: string | null } | null, State?: { value?: string | null } | null, PostalCode?: { value?: string | null } | null, IsPrimary?: { value?: boolean | null } | null } | null } | null> | null } | null } } };
 
+export type GetAccountAffiliationsQueryVariables = Exact<{
+  accountId?: InputMaybe<Scalars['ID']['input']>;
+}>;
+
+
+export type GetAccountAffiliationsQuery = { uiapi: { query: { ProviderAffiliation?: { edges?: Array<{ node?: { Id: string, RelatedAccountId?: { value?: string | null } | null, RelatedAccount?: { Name?: { value?: string | null } | null } | null, AffiliationType?: { value?: string | null, displayValue?: string | null } | null, Role?: { value?: string | null, displayValue?: string | null } | null, InfluenceType?: { value?: string | null, displayValue?: string | null } | null, AffiliationStrengthType?: { value?: string | null, displayValue?: string | null } | null, IsPrimary?: { value?: boolean | null } | null, IsActive?: { value?: boolean | null } | null, EffectiveStartDate?: { value?: string | null } | null, EffectiveEndDate?: { value?: string | null } | null } | null } | null> | null } | null } } };
+
 export type GetAccountDetailQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']['input']>;
 }>;
 
 
 export type GetAccountDetailQuery = { uiapi: { query: { Account?: { edges?: Array<{ node?: { Id: string, Name?: { value?: string | null, displayValue?: string | null } | null, RecordType?: { Name?: { value?: string | null } | null } | null, Type?: { value?: string | null, displayValue?: string | null } | null, Phone?: { value?: string | null } | null, PersonEmail?: { value?: string | null } | null, PersonMailingStreet?: { value?: string | null } | null, PersonMailingCity?: { value?: string | null } | null, PersonMailingState?: { value?: string | null } | null, PersonMailingPostalCode?: { value?: string | null } | null } | null } | null> | null } | null } } };
+
+export type GetAccountInquiriesQueryVariables = Exact<{
+  accountId?: InputMaybe<Scalars['ID']['input']>;
+}>;
+
+
+export type GetAccountInquiriesQuery = { uiapi: { query: { Inquiry?: { edges?: Array<{ node?: { Id: string, Name?: { value?: string | null } | null, Type?: { value?: string | null, displayValue?: string | null } | null, Priority?: { value?: string | null, displayValue?: string | null } | null, Status?: { value?: string | null, displayValue?: string | null } | null, InquiryChannelType?: { value?: string | null, displayValue?: string | null } | null, SubmittedDateTime?: { value?: string | null } | null, CreatedDate?: { value?: string | null } | null, TerritoryName?: { value?: string | null } | null, Account?: { Name?: { value?: string | null } | null } | null } | null } | null> | null } | null } } };
 
 export type GetAccountTerritoriesQueryVariables = Exact<{
   accountId?: InputMaybe<Scalars['ID']['input']>;
@@ -642,6 +656,13 @@ export type GetProductRequestsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetProductRequestsQuery = { uiapi: { query: { ProductRequest?: { edges?: Array<{ node?: { Id: string, ProductRequestNumber?: { value?: string | null } | null, Status?: { value?: string | null, displayValue?: string | null } | null, NeedByDate?: { value?: string | null } | null, CreatedDate?: { value?: string | null } | null, ShipmentType?: { value?: string | null, displayValue?: string | null } | null, DestinationLocation?: { Name?: { value?: string | null } | null } | null } | null } | null> | null } | null } } };
+
+export type GetProviderSummaryQueryVariables = Exact<{
+  accountId?: InputMaybe<Scalars['ID']['input']>;
+}>;
+
+
+export type GetProviderSummaryQuery = { uiapi: { currentUser?: { Id: string } | null, query: { PrvdAccountTerritorySummary?: { edges?: Array<{ node?: { Id: string, UserId?: { value?: string | null } | null, Territory2?: { Name?: { value?: string | null } | null } | null, KeyInformationSummary?: { value?: string | null } | null, KeyInfoSummaryDateTime?: { value?: string | null } | null, ChangeInformationSummary?: { value?: string | null } | null, ChangeInfoSummaryDateTime?: { value?: string | null } | null } | null } | null> | null } | null } } };
 
 export type GetSamplesByProductQueryVariables = Exact<{
   after?: InputMaybe<Scalars['String']['input']>;

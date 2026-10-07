@@ -1,0 +1,23 @@
+query GetAccountAffiliations($accountId: ID) {
+  uiapi {
+    query {
+      ProviderAffiliation(where: { AccountId: { eq: $accountId } }, first: 100, orderBy: { IsPrimary: { order: DESC } }) {
+        edges {
+          node {
+            Id
+            RelatedAccountId @optional { value }
+            RelatedAccount @optional { Name @optional { value } }
+            AffiliationType @optional { value displayValue }
+            Role @optional { value displayValue }
+            InfluenceType @optional { value displayValue }
+            AffiliationStrengthType @optional { value displayValue }
+            IsPrimary @optional { value }
+            IsActive @optional { value }
+            EffectiveStartDate @optional { value }
+            EffectiveEndDate @optional { value }
+          }
+        }
+      }
+    }
+  }
+}
